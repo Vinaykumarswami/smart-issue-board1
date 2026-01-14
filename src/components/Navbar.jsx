@@ -15,8 +15,12 @@ export default function Navbar() {
   }, []);
 
   const handleLogout = async () => {
-    await signOut(auth);
-    navigate("/login");
+    try {
+      await signOut(auth);
+      navigate("/login"); // ✅ redirect to login after logout
+    } catch (error) {
+      console.error(error);
+    }
   };
 
   return (
@@ -25,13 +29,34 @@ export default function Navbar() {
       bg-gradient-to-r from-indigo-600 to-purple-600 text-white shadow-lg"
     >
       <h1
-        className="text-xl font-bold tracking-wide cursor-pointer
-        hover:scale-105 transition"
+        className="text-xl font-bold tracking-wide cursor-pointer hover:scale-105 transition"
         onClick={() => navigate("/")}
       >
         Smart Issue Board
       </h1>
 
+      {/* NOT LOGGED IN */}
+      {!user && (
+        <div className="flex items-center gap-4">
+          <button
+            onClick={() => navigate("/login")}
+            className="bg-white/20 px-4 py-1.5 rounded-full
+            hover:bg-white/30 transition"
+          >
+            Login
+          </button>
+
+          <button
+            onClick={() => navigate("/register")}
+            className="bg-green-500 px-4 py-1.5 rounded-full
+            hover:bg-green-600 transition"
+          >
+            Register
+          </button>
+        </div>
+      )}
+
+      {/* LOGGED IN */}
       {user && (
         <div className="flex items-center gap-4">
           <span className="text-sm bg-white/20 px-3 py-1 rounded-full">
@@ -41,7 +66,7 @@ export default function Navbar() {
           <button
             onClick={handleLogout}
             className="bg-red-500 px-4 py-1.5 rounded-full
-            hover:bg-red-600 hover:scale-105 transition-all duration-200"
+            hover:bg-red-600 transition"
           >
             Logout
           </button>
